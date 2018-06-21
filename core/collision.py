@@ -1,38 +1,16 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 import pygame
 import random
 
+
 class Collision:
-    """ 
-    Handles collision detection on a grid of tiles.
-    Used for turret placement, projectiles and navigation.
-    """
+    """ 处理与网格的碰撞，用于炮塔的放置、炮弹和导航 """
 
     def __init__(self, level, resolution, tile_size):
-        """ 
-        Constructor. 
-        
+        """
         Args:
-            game (Game): The game instance.
-            resolution (int, int): The screen resolution.
-            tile_size (int): The size (pixels) of each cached tile.
-
+            game (Game): game实例
+            resolution (int, int): 屏幕分辨率
+            tile_size (int): 每个缓存切片的大小（像素）
         """
         self.level = level
         self.tile_size = tile_size
@@ -43,15 +21,14 @@ class Collision:
 
     def point_to_index(self, x, y):
         """
-        Converts a point on the screen to a tile index.
+        将屏幕上的点转换为图块索引
 
         Args:
-            x (int): The x coordinate.
-            y (int): The y coordinate.
+            x (int): x坐标
+            y (int): y坐标
 
         Returns:
-            (int): The index for the tile at (x, y).
-
+            (int): （x，y）处的图块索引
         """
         xIndex = x // self.tile_size
         yIndex = y // self.tile_size
@@ -60,26 +37,24 @@ class Collision:
 
     def point_blocked(self, x, y):
         """
-        Checks if the given point is blocked.
+        检查给定点是否被阻塞
 
         Args:
-            x (int): The x coordinate.
-            y (int): The y coordinate.
+            x (int): x坐标
+            y (int): y坐标
 
         Returns:
-            True if blocked, otherwise False.
-
+            若阻塞则为True，反之为False
         """
         return self.point_to_index(x, y) in self.blocked_tiles
 
     def block_point(self, x, y):
         """
-        Makes the given point blocked.
+        阻塞给定点
 
         Args:
-            x (int): The x coordinate.
-            y (int): The y coordinate.
-
+            x (int): x坐标
+            y (int): y坐标
         """
         index = self.point_to_index(x, y)
 
@@ -90,12 +65,11 @@ class Collision:
 
     def unblock_point(self, x, y):
         """
-        Makes the given point unblocked.
+        释放给定点
 
         Args:
-            x (int): The x coordinate.
-            y (int): The y coordinate.
-
+            x (int): x坐标
+            y (int): y坐标
         """
         index = self.point_to_index(x, y)
 
@@ -103,27 +77,25 @@ class Collision:
             self.blocked_tiles.remove(index)
             self.overlay = None
 
-
     def rect_blocked(self, x, y, width, height):
         """
-        Checks if the given rect is blocked.
+        检查给定的矩形是否被阻塞
 
         Args:
-            x (int): The top left x coordinate.
-            y (int): The top left y coordinate.
-            width (int): The width of the rect.
-            height (int): The height of the rect.
+            x (int): 左上角x坐标
+            y (int): 左上角y坐标
+            width (int): 矩形的宽
+            height (int): 矩形的高
 
         Returns:
-            True if any part in the rect is blocked, otherwise False.
-
+            若矩形任何部分被阻塞则为True，反之为False
         """
         xOffset = x % self.tile_size
         yOffset = y % self.tile_size
 
         for xPos in range(x - xOffset, x + width, self.tile_size):
             for yPos in range(y - yOffset, y + height, self.tile_size):
-                
+
                 if self.point_blocked(xPos, yPos):
                     return True
 
@@ -131,14 +103,13 @@ class Collision:
 
     def block_rect(self, x, y, width, height):
         """
-        Makes the given rect area blocked.
+        阻塞给定的矩形区域
 
         Args:
-            x (int): The top left x coordinate.
-            y (int): The top left y coordinate.
-            width (int): The width of the rect.
-            height (int): The height of the rect.
-
+            x (int): 左上角x坐标
+            y (int): 左上角y坐标
+            width (int): 矩形的宽
+            height (int): 矩形的高
         """
         xOffset = x % self.tile_size
         yOffset = y % self.tile_size
@@ -149,19 +120,17 @@ class Collision:
 
     def unblock_rect(self, x, y, width, height):
         """
-        Makes the given rect area unblocked.
+        释放给定的矩形区域
 
         Args:
-            x (int): The top left x coordinate.
-            y (int): The top left y coordinate.
-            width (int): The width of the rect.
-            height (int): The height of the rect.
-
+            x (int): 左上角x坐标
+            y (int): 左上角y坐标
+            width (int): 矩形的宽
+            height (int): 矩形的高
         """
         xOffset = x % self.tile_size
         yOffset = y % self.tile_size
 
         for xPos in range(x - xOffset, x + width, self.tile_size):
             for yPos in range(y - yOffset, y + height, self.tile_size):
-                
                 self.unblock_point(xPos, yPos)

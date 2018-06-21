@@ -1,20 +1,3 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 from pygame.sprite import Sprite
 from pygame.rect import Rect
 import pygame
@@ -22,22 +5,20 @@ import pygame
 
 class Prefab(Sprite):
     """ 
-    A prefab object.
-    Each prefab has a .prefab file containing variables loaded into the new prefab instance.   
+    prefab对象
+
+    每个prefab对象都有一个.prefab文件，其中包含加载到新prefab实例中的变量
     """
 
-    # Used to cache config files { name, config }
-    Cache = { }
+    # 缓存配置文件 { name: config }
+    Cache = {}
 
     def __init__(self, name, x, y):
-        """ 
-        Constructor. 
-        
+        """
         Args:
-            name (str): The config file name.
-            x (int): The top left x coordinate.
-            y (int): The top left y coordinate.
-
+            name (str): 配置文件名
+            x (int): 左上角x坐标
+            y (int): 左上角y坐标
         """
         super().__init__()
 
@@ -45,13 +26,13 @@ class Prefab(Sprite):
         self.config = self.load_config(name)
         self.apply_config(self.config)
 
-        # Handle animations
+        # 处理动画
         if hasattr(self, "anim_source"):
             self.anim_change_time = self.anim_rate
             self.anim_index = 0
             self.image = self.anim_source[0]
 
-        # Handle sprite images
+        # 处理sprite图像
         if hasattr(self, "image"):
             self.rect = self.image.get_rect()
             self.rect.x = x
@@ -61,18 +42,17 @@ class Prefab(Sprite):
 
     def update_animation(self, delta):
         """
-        Updates any spritesheet animation on the prefab.
+        更新prefab上的所有sprite图表动画
 
         Args:
-            delta (float): The time since last frame.
-
+            delta (float): 从上一帧开始的时间
         """
         if hasattr(self, "anim_source"):
             self.anim_change_time -= delta
 
             if self.anim_change_time < 0:
                 self.anim_change_time += self.anim_rate
-                
+
                 self.anim_index += 1
                 if self.anim_index == len(self.anim_source):
                     self.anim_index = 0
@@ -82,23 +62,21 @@ class Prefab(Sprite):
 
                 self.image = self.anim_source[self.anim_index]
 
-
     def load_config(self, name):
         """ 
-        Gets the config dictionary for the named prefab.
+        获取指定prefab的配置字典
 
         Args:
-            name (str): The name of the .prefab file to load.
+            name (str): 要加载的.prefab文件的名称
 
         Returns:
-            A name -> value dictionary of config variables.
-       
+            entries (dict): 配置变量的字典
         """
-        # Try cached version first.
+        # 先尝试已缓存的版本
         if name in Prefab.Cache.keys():
             return Prefab.Cache[name]
 
-        entries = { }
+        entries = {}
 
         try:
             with open("prefabs\\" + name + ".prefab", "r") as file:
@@ -120,12 +98,15 @@ class Prefab(Sprite):
                     elif type == "aimg":
                         entries[key] = pygame.image.load(value).convert_alpha()
                     elif type == "font":
-                        entries[key] = pygame.font.Font(pygame.font.match_font(value, "font_bold" in entries.keys()), entries["font_size"])
+                        entries[key] = pygame.font.Font(pygame.font.match_font(value, "font_bold" in entries.keys()),
+                                                        entries["font_size"])
                     elif type == "spritesheet":
-                        entries[key] = [pygame.image.load(value + str(i) + ".png").convert_alpha() for i in range(entries["anim_count"])]
+                        entries[key] = [pygame.image.load(value + str(i) + ".png").convert_alpha() for i in
+                                        range(entries["anim_count"])]
                     elif type == "rotimg":
                         original = pygame.image.load(value).convert_alpha()
-                        entries[key] = [original] + [pygame.transform.rotate(original, angle) for angle in range(5, 361, 5)]
+                        entries[key] = [original] + [pygame.transform.rotate(original, angle) for angle in
+                                                     range(5, 361, 5)]
 
         except OSError:
             print("Could not read prefab " + name)
@@ -135,11 +116,10 @@ class Prefab(Sprite):
 
     def apply_config(self, config):
         """ 
-        Applies all config settings to the prefab instance.
-       
-        Args:
-            config (dict): A name:value list of variables to apply.
+        将所有的配置设置应用于prefab实例
 
+        Args:
+            config (dict): 将要应用的变量值列表
         """
         for name in config.keys():
             setattr(self, name, config[name])

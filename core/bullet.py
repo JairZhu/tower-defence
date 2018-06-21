@@ -1,20 +1,3 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 import math
 import random
 import pygame
@@ -22,20 +5,15 @@ from core.prefab import Prefab
 
 
 class Bullet(Prefab):
-    """ 
-    Represents a single bullet. 
-    """
+    """ 子弹类 """
 
     def __init__(self, game, origin, target):
-        """ 
-        Constructor. 
-        
+        """
         Args:
-            game (Game): The game instance.
-            origin (int, int): The initial bullet position.
-            target (int, int): The position to aim at.
-            damage (int): The damage to inflict on any target hit.
-
+            game (Game): game实例
+            origin (int, int): 初始子弹位置
+            target (int, int): 目标位置
+            damage (int): 对命中目标造成的伤害
         """
         super().__init__("attack_bullet", origin[0], origin[1])
         self.game = game
@@ -56,25 +34,24 @@ class Bullet(Prefab):
 
     def update(self, delta):
         """ 
-        Moves the bullet once per frame. 
+        每帧移动一次子弹
         
         Args:
-            delta (float): The time (seconds) since the last update.
-
+            delta (float): 距上次更新的时间（秒）
         """
         self.rect.x += self.xSpeed * delta
         self.rect.y += self.ySpeed * delta
 
-        # Lifetime
+        # 一颗子弹出现的时间
         self.current_life += delta
         if self.life < self.current_life:
             self.kill()
 
-        # Collisions with scene
+        # 与场景的碰撞
         if self.current_life > 0.03 and self.game.level.collision.point_blocked(self.rect.centerx, self.rect.centery):
             self.kill()
 
-        # Collisions with enemies
+        # 与敌人的碰撞
         for enemy in self.game.wave.enemies:
             dx = enemy.rect.centerx - self.rect.centerx
             dy = enemy.rect.centery - self.rect.centery
