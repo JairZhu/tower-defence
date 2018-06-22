@@ -1,20 +1,3 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 from core.prefab import Prefab
 from core.collision import Collision
 from core.wave import Wave
@@ -23,20 +6,13 @@ from pygame.sprite import OrderedUpdates
 
 
 class Level:
-    """
-    Represents a level loaded from a text based .level file.
-
-    Contains level prefabs, cached paths and collision data.
-    """
+    """ 从.level文件中加载关卡，包含关卡prefab、缓存路径和碰撞数据 """
 
     def __init__(self, game, name):
-        """ 
-        Constructor. 
-        
+        """
         Args:
-            game (Game): The game instance.
-            name (str): The name of the level being loaded (case sensitive).
-
+            game (Game): game实例
+            name (str): 关卡名称
         """
         self.game = game
         self.name = name
@@ -45,15 +21,11 @@ class Level:
 
     def load_data(self):
         """ 
-        Loads the level by its name. 
-
-        Level data is saved in a text based .level file, containing prefab types 
-        and their corresponding positions. This data is used by Level.restart()
-        to position level components.
+        按名称加载关卡
+        关卡数据保存在.level文件中，包含prefab类型和相应的位置，这些数据被用于定位关卡组件
 
         Returns:
-            list[list[string]]: A list of data entries for the level.
-
+            list[list[string]]: 该关卡的数据条目列表
         """
         try:
             with open("levels\\" + self.name + ".level", "r") as file:
@@ -63,9 +35,7 @@ class Level:
             print("Error loading level")
 
     def start(self):
-        """ 
-        Sets up and starts the level.
-        """
+        """ 设置并启动关卡 """
         self.collision = Collision(self, self.game.window.resolution, 32)
         self.prefabs = OrderedUpdates()
         self.pathfinding = Pathfinding(self.game, self.collision)
@@ -79,7 +49,7 @@ class Level:
             self.prefabs.add(prefab)
 
             if hasattr(prefab, "block"):
-                # Block textures are 1 pixel wider to make a full border
+                # 块纹理1个像素宽，以生成完整边框
                 self.collision.block_rect(x, y, prefab.rect.width - 1, prefab.rect.height - 1)
 
         self.pathfinding.precompute(30)

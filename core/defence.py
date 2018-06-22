@@ -1,20 +1,3 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 import pygame
 import math
 from pygame import Rect
@@ -24,20 +7,15 @@ from core.explosion import Explosion
 
 
 class Defence(Prefab):
-    """
-    A base class for user-placed turrets.
-    """
-    
+    """ 用户放置的炮塔的基类 """
+
     def __init__(self, game, name, x, y):
         """
-        Constructor.
-
         Args:
-            game (Game): The game instance.
-            name (str): The name of the type of turret.
-            x (int): The x coordinate.
-            y (int): The y coordinate.
-
+            game (Game): game实例
+            name (str): 炮塔类型的名称
+            x (int): x坐标
+            y (int): y坐标
         """
         super().__init__(name, x, y)
 
@@ -56,14 +34,13 @@ class Defence(Prefab):
 
     def update(self, delta):
         """
-        Called once each frame.
-        Updates targeting and launches attacks.
+        每帧调用一次，更新目标并启动攻击
 
         Args:
-            delta (float): The time (seconds) since the last update.
+            delta (float): 距上次更新的时间（秒）
 
         """
-        # Defences such as walls have no attack,
+        # 防御墙不能攻击
         if self.attack == "none":
             return
 
@@ -72,27 +49,27 @@ class Defence(Prefab):
         self.fire_time += delta
         while self.fire_time >= self.attack_rate:
             self.fire_time -= self.attack_rate
-        
-            if target is not None and target != self.rect.center: # Prevents divide by 0 errors when positions are the same.
-            
-                # Spawn the attack.
+
+            if target is not None and target != self.rect.center:  # 当位置相同时，防止除以0
+
+                # 攻击
                 if self.attack == "bullet":
                     self.game.bullets.add(Bullet(self.game, self.rect.center, target))
                 elif self.attack == "explosion":
                     self.game.explosions.add(Explosion(self.game, target, self.explosion_radius, self.explosion_damage))
 
-                # Create the flash (if specified).
+                # 产生闪光效果
                 if hasattr(self, "flash_offset"):
                     self.game.explosions.add(DefenceFlash(self.rect.center, target, self.flash_offset))
 
-                # Used for one-time defences e.g. mines.
+                # 用于一次性防御，例如地雷
                 if self.attack_rate <= 0:
                     self.kill()
 
             if self.attack_rate <= 0:
                 break
 
-        # Rotate the defence to face its target.
+        # 转动炮塔以跟踪目标
         if self.rotate:
             center = self.rect.center
 
@@ -112,12 +89,10 @@ class Defence(Prefab):
 
     def get_target(self):
         """
-        Attempts to find a suitable target.
+        找到合适的目标
 
         Returns:
-            (int, int) The position of the target, if found.
-            Otherwise returns None.
-
+            (int, int) 若找到则返回目标坐标，反之则返回None
         """
         if self.target is not None and self.is_target_suitable(self.target):
             return self.target.rect.center
@@ -131,14 +106,13 @@ class Defence(Prefab):
 
     def is_target_suitable(self, target):
         """
-        Calculates if a target can be shot at.
+        判断是否可以射击目标
 
         Args:
-            target (Enemy): The target being tried.
+            target (Enemy): 目标实例
 
         Returns 
-            True if the target can be hit, otherwise false.
-
+            若目标可被击中则为True，反之为False
         """
         if target not in self.game.wave.enemies:
             return False
@@ -151,19 +125,14 @@ class Defence(Prefab):
 
 
 class DefenceFlash(Prefab):
-    """
-    A flash effect displayed when some defences attack.
-    """
+    """ 炮塔攻击时显示的闪光效果 """
 
     def __init__(self, defence_position, target, offset):
         """
-        Constructor.
-        
         Args:
-            defence_position (int, int): The centre of the defence.
-            target (int, int): The centre of the target.
-            offset (float): The distance from the defence_position to the flash.
-
+            defence_position (int, int): 炮塔的中心坐标
+            target (int, int): 目标的中心坐标
+            offset (float): 从炮塔中心到闪光的距离
         """
         dx = target[0] - defence_position[0]
         dy = target[1] - defence_position[1]
@@ -175,10 +144,9 @@ class DefenceFlash(Prefab):
 
     def update(self, delta):
         """
-        Called each frame. Updates the graphic.
+        每一帧被调用，更新图像
 
         Args:
-            delta (float): The time since the last update.
-
+            delta (float): 距上次更新的时间
         """
         super().update_animation(delta)

@@ -1,38 +1,16 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 import pygame
 import random
 from core.enemy import Enemy
 
 
 class Wave:
-    """
-    Controls the spawning of enemies for a single wave.
-    """
+    """ 控制每波敌人的生成数量 """
 
     def __init__(self, game, number):
         """
-        Constructor.
-
         Args:
-            game (Game): The game instance.
-            number (int): The wave number.
-
+            game (Game): game实例
+            number (int): 波数
         """
         self.game = game
         self.number = number
@@ -47,12 +25,10 @@ class Wave:
 
     def update(self, delta):
         """
-        Called once per frame.
-        Updates enemy spawning.
+        每帧调用一次，更新敌人的生成
 
         Args:
-            delta (float): The time (seconds) since the last update.
-
+            delta (float): 距上次更新的时间
         """
         self.enemies.update(delta)
 
@@ -63,15 +39,15 @@ class Wave:
         if self.started and self.spawn_count_small > 0:
             self.spawn("enemy_small")
             self.spawn_count_small -= 1
-        
+
         if self.started and self.spawn_count_medium > 0 and self.spawn_count_small <= self.spawn_count_medium:
             self.spawn("enemy_medium")
             self.spawn_count_medium -= 1
-        
+
         if self.started and self.spawn_count_large > 0 and self.spawn_count_medium <= self.spawn_count_large:
             self.spawn("enemy_large")
             self.spawn_count_large -= 1
-            
+
         if not self.started:
             self.started = True
 
@@ -79,18 +55,16 @@ class Wave:
 
     def spawn(self, enemy_type):
         """
-        Spawns an enemy.
+        产生敌人
 
         Args:
-            enemy_type (str): The enemy prefab name.
-
+            enemy_type (str): 敌人的profab名称
         """
         enemy = Enemy(self.game, enemy_type, 0, 0)
         self.enemies.add(enemy)
 
     def enemy_killed(self):
-        """
-        Called whenever an enemy is killed.
-        """
+        """ 当敌人死亡时调用 """
+
         if len(self.enemies) == 0 and self.spawn_count_small <= 0 and self.spawn_count_medium <= 0:
             self.done = True
