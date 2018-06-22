@@ -1,20 +1,3 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 import urllib.request
 import json
 
@@ -39,13 +22,13 @@ class Leaderboard:
         try:
             request = urllib.request.Request(self.application_url, headers=self.application_headers)
             response = urllib.request.urlopen(request)
-        
+
             raw = response.read().decode()
             data = json.loads(raw)
 
             self.entries = [LeaderboardEntry(d) for d in data]
-            self.entries.sort(key = lambda e: e.score, reverse = True)
-        
+            self.entries.sort(key=lambda e: e.score, reverse=True)
+
         except:
             print("Error downloading leaderboard")
 

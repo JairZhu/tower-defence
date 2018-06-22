@@ -11,16 +11,13 @@ from core.prefab import Prefab
 
 class Game:
     """ 
-    Contains the main control code and the game loop.
+    包含主控制代码和游戏循环
     """
 
     def __init__(self, window):
-        """ 
-        Constructor. 
-        
+        """
         Args:
-            window (Window): The window instance to render to.
-
+            window (Window): 要显示的window实例
         """
         self.window = window
         self.clock = pygame.time.Clock()
@@ -29,15 +26,15 @@ class Game:
         self.explosions = pygame.sprite.Group()
         self.load_level("path")
         self.defence_type = 0
-        self.defence_prototypes = [Defence(self, "defence_" + name, -100, -100) for name in ["pillbox", "wall", "mines", "artillery"]]
+        self.defence_prototypes = [Defence(self, "defence_" + name, -100, -100) for name in
+                                   ["pillbox", "wall", "mines", "artillery"]]
 
     def load_level(self, name):
         """
-        Loads a new level.
+        加载一个新的关卡
 
         Args:
-            name (str): The name of the level (case sensitive).
-
+            name (str): 关卡的名称
         """
         self.defences.empty()
         self.bullets.empty()
@@ -47,15 +44,13 @@ class Game:
         self.menu = Menu(self)
 
     def run(self):
-        """ 
-        Runs the main game loop. 
-        """
+        """ 运行游戏主循环 """
         self.running = True
 
         while self.running:
             delta = self.clock.tick(60) / 1000.0
 
-            # Look for a quit event
+            # 等待退出事件
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.quit()
@@ -66,7 +61,7 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     self.menu.key_pressed(event.key)
 
-            # Call update functions
+            # 调用更新函数
             self.menu.update()
             self.level.pathfinding.update()
 
@@ -80,7 +75,7 @@ class Game:
                 if self.wave.done:
                     self.wave = Wave(self, self.wave.number + 1)
 
-            # Redraw graphics
+            # 重新绘制图像
             self.window.clear()
             self.level.prefabs.draw(self.window.screen)
             self.defences.draw(self.window.screen)
@@ -90,28 +85,24 @@ class Game:
             self.menu.draw(self.window.screen)
 
     def quit(self):
-        """
-        Quits and closes the game.
-        """
+        """ 退出并关闭游戏 """
         self.running = False
 
     def select_defence(self, type):
         """
-        Picks a defence type for placement.
+        选择放置的防御类型
 
         Args:
-            type (int): The index of the selcted defence type.
-
+            type (int): 所选防御类型
         """
         self.defence_type = type
 
     def place_defence(self, position):
         """
-        Attempts to place a defence at the given position.
+        在给定位置防止炮塔
 
         Args:
-            position (int, int): The intended coordinates of the defence.
-
+            position (int, int): 炮塔的预期坐标
         """
         if self.defence_type < 0:
             return
@@ -124,11 +115,11 @@ class Game:
         x = position[0] - position[0] % 32
         y = position[1] - position[1] % 32
 
-        # Stop if the defence would intersect with the level.
+        # 若防御塔与关卡相交则停止
         if self.level.collision.rect_blocked(x, y, defence.rect.width - 2, defence.rect.height - 2):
             return
 
-        # Stop if the defence may lead no path for enemies.
+        # 若防御塔让敌人没有路线逃离则停止
         if hasattr(defence, "block") and self.level.pathfinding.is_critical((x, y)):
             return
 

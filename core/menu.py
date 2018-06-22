@@ -1,20 +1,3 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 from core.prefab import Prefab
 from core.leaderboard import Leaderboard
 from pygame.sprite import OrderedUpdates
@@ -23,17 +6,12 @@ import math
 
 
 class Menu(Prefab):
-    """
-    Controls the menu system.
-    """
+    """ 控制菜单系统 """
 
     def __init__(self, game):
         """
-        Constructor.
-
         Args:
-            game (Game): The game instance.
-
+            game (Game): game实例
         """
         super().__init__("menu", 0, 0)
 
@@ -44,22 +22,21 @@ class Menu(Prefab):
         self.show_main_screen()
         self.visible = True
         self.leaderboard_name = None
-        
+
     def show(self):
-        """
-        Shows the menu.
-        """
+        """ 显示菜单 """
         self.visible = True
         self.show_main_screen()
 
     def hide(self):
-        """
-        Hides the menu and enables in game icons.
-        """
+        """ 隐藏菜单并启用游戏图标 """
         self.visible = False
         self.clear()
 
-        self.defence_buttons = [MenuButton(self, "menu_defence_button", self.game.defence_prototypes[i].display_name, (i + 1) * 64, 0, lambda: self.game.select_defence((pygame.mouse.get_pos()[0] - 64) // 64)) for i in range(len(self.game.defence_prototypes))]
+        self.defence_buttons = [
+            MenuButton(self, "menu_defence_button", self.game.defence_prototypes[i].display_name, (i + 1) * 64, 0,
+                       lambda: self.game.select_defence((pygame.mouse.get_pos()[0] - 64) // 64)) for i in
+            range(len(self.game.defence_prototypes))]
         self.components.add(self.defence_buttons)
 
         self.wave_label = MenuLabel(self, "menu_pause_button", "Wave", 448, 0)
@@ -76,16 +53,12 @@ class Menu(Prefab):
         self.update()
 
     def clear(self):
-        """
-        Removes all components from the menu.
-        """
+        """ 从菜单中删除所有组件 """
         self.components.remove(self.components)
         self.component_next = self.top
 
     def update(self):
-        """
-        Called each frame.
-        """
+        """ 每帧被调用 """
         if not self.visible:
             self.wave_label.set_text("Wave: " + str(self.game.wave.number))
             self.lives_label.set_text("Lives: " + str(self.game.level.lives))
@@ -96,46 +69,48 @@ class Menu(Prefab):
             for i in range(len(self.defence_buttons)):
                 self.defence_buttons[i].disabled = (self.game.defence_prototypes[i].cost > self.game.level.money)
                 self.defence_buttons[i].selected = (self.game.defence_type == i)
-        
+
         self.components.update()
 
     def clicked(self):
-        """
-        Called when a mouse button is pressed.
-        """
+        """ 当按下鼠标按钮时调用 """
         for component in self.components:
             if isinstance(component, MenuButton):
                 component.clicked()
 
     def key_pressed(self, key):
         """
-        Called when a key has been pressed.
+        当有按键按下时调用
 
         Args:
-            key: The key that was pressed.
-
+            key: 被按下的键
         """
         if self.leaderboard_name is None:
             return
 
-        keys = { pygame.K_a: "a", pygame.K_b: "b", pygame.K_c: "c", pygame.K_d: "d", pygame.K_e: "e", pygame.K_f: "f", pygame.K_g: "g", pygame.K_h: "h", pygame.K_i: "i", 
-                pygame.K_j: "j", pygame.K_k: "k", pygame.K_l: "l", pygame.K_m: "m", pygame.K_n: "n", pygame.K_o: "o", pygame.K_p: "p", pygame.K_q: "q", pygame.K_r: "r", 
-                pygame.K_s: "s", pygame.K_t: "t", pygame.K_u: "u", pygame.K_v: "v", pygame.K_w: "w", pygame.K_x: "x", pygame.K_y: "y", pygame.K_z: "z",
-                pygame.K_0: "0", pygame.K_1: "1", pygame.K_2: "2", pygame.K_3: "3", pygame.K_4: "4", pygame.K_5: "5", pygame.K_6: "6", pygame.K_7: "7",
-                pygame.K_8: "8", pygame.K_9: "9" }
+        keys = {pygame.K_a: "a", pygame.K_b: "b", pygame.K_c: "c", pygame.K_d: "d", pygame.K_e: "e", pygame.K_f: "f",
+                pygame.K_g: "g", pygame.K_h: "h", pygame.K_i: "i",
+                pygame.K_j: "j", pygame.K_k: "k", pygame.K_l: "l", pygame.K_m: "m", pygame.K_n: "n", pygame.K_o: "o",
+                pygame.K_p: "p", pygame.K_q: "q", pygame.K_r: "r",
+                pygame.K_s: "s", pygame.K_t: "t", pygame.K_u: "u", pygame.K_v: "v", pygame.K_w: "w", pygame.K_x: "x",
+                pygame.K_y: "y", pygame.K_z: "z",
+                pygame.K_0: "0", pygame.K_1: "1", pygame.K_2: "2", pygame.K_3: "3", pygame.K_4: "4", pygame.K_5: "5",
+                pygame.K_6: "6", pygame.K_7: "7",
+                pygame.K_8: "8", pygame.K_9: "9"}
 
         if key in keys.keys():
-            self.leaderboard_name.set_text(self.leaderboard_name.text + (keys[key].upper() if pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[pygame.K_RSHIFT] else keys[key]))
+            self.leaderboard_name.set_text(self.leaderboard_name.text + (
+                keys[key].upper() if pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[
+                    pygame.K_RSHIFT] else keys[key]))
         elif key is pygame.K_BACKSPACE and self.leaderboard_name.text != "":
             self.leaderboard_name.set_text(self.leaderboard_name.text[:-1])
 
     def draw(self, screen):
         """
-        Draws the menu and its components.
+        绘制菜单及其组件
 
         Args:
-            screen (Surface): The surface that is blitted to.
-
+            screen (Surface): 表面上的斑点
         """
         if self.visible:
             screen.blit(self.image, (0, 0))
@@ -144,15 +119,14 @@ class Menu(Prefab):
 
     def add_button(self, text, callback):
         """
-        Adds a standard button to the menu screen.
+        在菜单屏幕上添加一个标准按钮
 
         Args:
-            text (str): The text to display on the button.
-            callback (callable): The callback when the button is clicked.
+            text (str): 在按钮上显示的文字
+            callback (callable): 点击按钮时的回调函数
 
         Returns:
-            (MenuButton): The button.
-
+            (MenuButton): 按钮
         """
         button = MenuButton(self, "menu_button", text, 0, self.component_next, callback)
         button.rect.x = (self.rect.width - button.rect.width) / 2
@@ -165,23 +139,21 @@ class Menu(Prefab):
 
     def add_level_button(self, level):
         """
-        Adds a change level button to the menu screen.
+        在菜单屏幕添加更改关卡按钮
 
         Args:
-            level (str): The name of the level to display on the button.
-
+            level (str): 在按钮上显示的关卡名称
         """
-        button = MenuButton(self, "menu_level_" + level, level, 0, self.component_next, lambda: self.game.load_level(level))
+        button = MenuButton(self, "menu_level_" + level, level, 0, self.component_next,
+                            lambda: self.game.load_level(level))
         button.rect.x = (self.rect.width - button.rect.width) / 2
-        
+
         self.components.add(button)
         self.component_next += button.rect.height
         self.component_next += button.padding
 
     def show_main_screen(self):
-        """
-        Shows the main menu screen.
-        """
+        """ 显示主菜单屏幕 """
         self.clear()
 
         if self.game.level.time > 0:
@@ -196,9 +168,7 @@ class Menu(Prefab):
         self.add_button("Quit Game", self.game.quit)
 
     def show_how_to_play_screen(self):
-        """
-        Shows the how to play menu screen.
-        """
+        """ 显示how to play """
         self.clear()
         self.add_button("Back", self.show_main_screen)
 
@@ -207,9 +177,7 @@ class Menu(Prefab):
         instructions.rect.x = (self.rect.width - instructions.rect.width) / 2
 
     def show_change_level_screen(self):
-        """
-        Shows the change level screen.
-        """
+        """ 显示change level """
         self.clear()
         self.add_button("Back", self.show_main_screen)
 
@@ -223,9 +191,7 @@ class Menu(Prefab):
             self.add_level_button("maze")
 
     def show_leaderboard_screen(self):
-        """
-        Shows the leaderboard screen.
-        """
+        """ 显示排行榜 """
         self.leaderboard.retrieve()
         self.clear()
         self.add_button("Back", self.show_main_screen)
@@ -235,12 +201,12 @@ class Menu(Prefab):
         else:
             for i in range(0, 4 if len(self.leaderboard.entries) > 6 else len(self.leaderboard.entries)):
                 entry = self.leaderboard.entries[i]
-                self.add_button(entry.name + "   Lvl=" + entry.level + "   Scr=" + str(entry.score) + "   Wve=" + str(entry.wave), None)
+                self.add_button(
+                    entry.name + "   Lvl=" + entry.level + "   Scr=" + str(entry.score) + "   Wve=" + str(entry.wave),
+                    None)
 
     def show_lose_screen(self):
-        """
-        Shows the game over screen.
-        """
+        """ 显示game over """
         self.show()
         self.clear()
         self.add_button("Game Over", None)
@@ -250,40 +216,32 @@ class Menu(Prefab):
         self.add_button("Add To Leaderboard", self.show_add_to_leaderboard_screen)
 
     def show_add_to_leaderboard_screen(self):
-        """
-        Shows the add to leaderboard screen.
-        """
+        """ 显示添加到排行榜 """
         self.clear()
         self.add_button("Type Your Name", None)
         self.leaderboard_name = self.add_button("", None)
         self.add_button("Submit", self.submit_leaderboard)
 
     def submit_leaderboard(self):
-        """
-        Attempts to submit a score to the leaderboard.
-        """
+        """ 向排行榜提交分数 """
         if self.leaderboard_name.text != "":
-            self.leaderboard.add(self.game.level.name, self.leaderboard_name.text, self.game.level.get_score(), self.game.wave.number)
+            self.leaderboard.add(self.game.level.name, self.leaderboard_name.text, self.game.level.get_score(),
+                                 self.game.wave.number)
             self.game.load_level(self.game.level.name)
             self.show_leaderboard_screen()
 
 
 class MenuLabel(Prefab):
-    """
-    A label displayed by the menu system. Contains a background.
-    """
+    """ 菜单系统显示的标签，包含背景 """
 
     def __init__(self, menu, type, text, x, y):
         """
-        Constructor.
-
         Args:
-            menu (Menu): The menu instance.
-            type (str): The prefab name, used for font and background.
-            text (str): The text to display on the button.
-            x (int): The x position.
-            y (int): The y position.
-
+            menu (Menu): menu实例
+            type (str): prefab名称，用于字体和背景
+            text (str): 在按钮上显示的文字
+            x (int): x坐标
+            y (int): y坐标
         """
         super().__init__(type, x, y)
 
@@ -296,11 +254,9 @@ class MenuLabel(Prefab):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
+
     def update(self):
-        """
-        Called each frame. Looks for mouse presses over the button.
-        """
+        """ 每帧调用，查找鼠标点击 """
         if self.disabled:
             self.set_image(self.image_d)
         elif self.highlighted or self.selected:
@@ -310,26 +266,24 @@ class MenuLabel(Prefab):
 
     def set_text(self, text):
         """
-        Sets the text on the label.
+        设置标签上的文本
 
         Args:
-            text (str): The new text to display.
-
+            text (str): 要显示的新文本
         """
         if self.text != text:
             self.text = text
-            
+
             img = self.image_template
             self.image_template = None
             self.set_image(img)
 
     def set_image(self, image):
         """
-        Sets the background image to the given surface.
+        设置背景图像
         
         Args:
-            image (Surface): The image to use.
-
+            image (Surface): 要使用的图像
         """
         if self.image_template == image:
             return
@@ -341,38 +295,33 @@ class MenuLabel(Prefab):
             self.render_text(self.image)
         else:
             self.image = image
-           
+
     def render_text(self, background):
         """
-        Renders the button's text to the given background surface.
+        将按钮的文本渲染到给定的背景表面
 
         Args:
-            background (Surface): The surface to be rendered to.
-
+            background (Surface): 要渲染的表面
         """
         colour = (self.col_r, self.col_g, self.col_b)
         rendered = self.font.render(self.text, True, colour)
-        dest = ((background.get_rect().width - rendered.get_rect().width) // 2, (background.get_rect().height - rendered.get_rect().height) // 2)
+        dest = ((background.get_rect().width - rendered.get_rect().width) // 2,
+                (background.get_rect().height - rendered.get_rect().height) // 2)
         background.blit(rendered, dest)
 
 
 class MenuButton(MenuLabel):
-    """
-    A menu label that responds to being clicked.
-    """
+    """ 响应被点击的菜单标签 """
 
     def __init__(self, menu, type, text, x, y, callback):
         """
-        Constructor.
-
         Args:
-            menu (Menu): The menu instance.
-            type (str): The prefab name, used for font and background.
-            text (str): The text to display on the button.
-            x (int): The x position.
-            y (int): The y position.
-            callback (callable): The callback triggered when the button is pressed.
-
+            menu (Menu): menu实例
+            type (str): prefab名称，用于字体和背景
+            text (str): 在按钮上显示的文字
+            x (int): x坐标
+            y (int): y坐标
+            callback (callable): 按下按钮时触发的回调函数
         """
         super().__init__(menu, type, text, x, y)
 
@@ -380,18 +329,14 @@ class MenuButton(MenuLabel):
         self.last_pressed = True
 
     def update(self):
-        """
-        Called each frame. Looks for mouse presses over the button.
-        """
+        """ 每帧调用，查找鼠标点击 """
         hover = self.rect.collidepoint(pygame.mouse.get_pos())
         self.highlighted = hover and self.callback is not None
 
         super().update()
 
     def clicked(self):
-        """
-        Called whenever the mouse is clicked.
-        """
+        """ 每当鼠标点击时调用 """
         hover = self.rect.collidepoint(pygame.mouse.get_pos())
 
         if hover and self.callback is not None:

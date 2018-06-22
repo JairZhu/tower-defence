@@ -1,20 +1,3 @@
-
-
-###########################################
-#
-# COMP 1551
-# Core Programming
-#
-# Coursework 2 - Mini Project
-#
-# George Loines
-# 200836065
-#
-# 02 Feb 2015
-#
-###########################################
-
-
 import random
 
 
