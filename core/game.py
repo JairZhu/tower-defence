@@ -7,6 +7,9 @@ from core.enemy import Enemy
 from core.wave import Wave
 from core.menu import Menu
 from core.prefab import Prefab
+import threading
+import os
+import pyaudio
 
 
 class Game:
@@ -43,9 +46,26 @@ class Game:
         self.wave = Wave(self, 1)
         self.menu = Menu(self)
 
+    def play_music(self, music):
+        """
+        持续播放音乐
+
+        Args:
+            music: 播放的音乐
+        """
+        while True:
+            music.play()
+
+
     def run(self):
         """ 运行游戏主循环 """
         self.running = True
+
+        # 加载音乐
+        pygame.mixer.init()
+        music = pygame.mixer.Sound(os.path.join('music', '001.wav'))
+        t = threading.Thread(target=self.play_music, args=[music])
+        t.start()
 
         while self.running:
             delta = self.clock.tick(60) / 1000.0
