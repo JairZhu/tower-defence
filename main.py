@@ -2,6 +2,7 @@ import pygame
 from core.game import Game
 from core.window import Window
 
+
 # 初始化pygame
 pygame.init()
 
