@@ -3,22 +3,16 @@ import json
 
 
 class Leaderboard:
-    """
-    Handles a leaderboard, backed by an azure REST api.
-    """
+    """ 处理排行榜，Azure REST API提供支持 """
 
     def __init__(self):
-        """
-        Constructor.
-        """
+
         self.application_url = "http://gl-tower-defence.azurewebsites.net/tables/scoreboardentry"
         self.application_headers = {"x-zumo-application": "cwrbABoHBGWKMhIiHrkVChWHoDcmAa78"}
         self.entries = []
 
     def retrieve(self):
-        """
-        Updates the leaderboard from the REST api.
-        """
+        """ 从REST API更新排行榜 """
         try:
             request = urllib.request.Request(self.application_url, headers=self.application_headers)
             response = urllib.request.urlopen(request)
@@ -34,15 +28,13 @@ class Leaderboard:
 
     def add(self, level, name, score, wave):
         """
-        Adds a new entry to the leaderboard.
-        Saves it using the REST api.
+        向排行榜添加一个新条目，使用REST API保存它。
         
         Args:
-            level (str): The level the score is for.
-            name (str): The displayed user's name.
-            score (int): The displayed score.
-            wave (int): The displayed wave number.
-
+            level (str): 该分数的关卡
+            name (str): 用户名称
+            score (int): 得分
+            wave (int): 波数
         """
         try:
             raw = {"level": level, "name": name, "score": score, "wave": wave}
@@ -58,17 +50,12 @@ class Leaderboard:
 
 
 class LeaderboardEntry:
-    """
-    A single entry in the leaderboard.
-    """
+    """ 排行榜中的单个条目 """
 
     def __init__(self, data):
         """
-        Constructor.
-
         Args:
-            data (dict): The entry data from json.
-
+            data (dict): 来自json的条目数据
         """
         self.level = data["level"]
         self.name = data["name"]
