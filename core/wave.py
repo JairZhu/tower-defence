@@ -65,6 +65,5 @@ class Wave:
 
     def enemy_killed(self):
         """ 当敌人死亡时调用 """
-
         if len(self.enemies) == 0 and self.spawn_count_small <= 0 and self.spawn_count_medium <= 0:
             self.done = True

@@ -3,7 +3,8 @@ from core.level import Level
 from core.defence import Defence
 from core.wave import Wave
 from core.menu import Menu
-from core.music import play_music
+from core.music import play_music1
+from core.music import play_music2
 import threading
 
 
@@ -46,7 +47,7 @@ class Game:
         self.running = True
 
         # 播放音乐
-        t = threading.Thread(target=play_music)
+        t = threading.Thread(target=play_music1)
         t.start()
 
         while self.running:
@@ -101,12 +102,12 @@ class Game:
 
     def place_defence(self, position):
         """
-        在给定位置防止炮塔
+        在给定位置放置炮塔
 
         Args:
             position (int, int): 炮塔的预期坐标
         """
-        if self.defence_type < 0:
+        if self.defence_type < 0 or self.defence_type > 3:
             return
 
         defence = self.defence_prototypes[self.defence_type]

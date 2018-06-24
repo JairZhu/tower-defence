@@ -38,7 +38,6 @@ class Defence(Prefab):
 
         Args:
             delta (float): 距上次更新的时间（秒）
-
         """
         # 防御墙不能攻击
         if self.attack == "none":
