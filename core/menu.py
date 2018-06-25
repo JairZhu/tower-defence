@@ -158,6 +158,7 @@ class Menu(Prefab):
         self.add_button(str(self.game.level.get_score()) + " Points", None)
         self.add_button("Restart Game", lambda: self.game.load_level(self.game.level.name))
 
+
 class MenuLabel(Prefab):
     """ 菜单系统显示的标签，包含背景 """
 
@@ -177,17 +178,19 @@ class MenuLabel(Prefab):
         self.highlighted = False
         self.selected = False
         self.disabled = False
-        if text != 'Game Over':
-            self.set_image(self.image_s)
+        if text == "Game Over":
+            self.set_image(self.image_over)
         else:
-            self.set_game_over_image(self.image_over)
+            self.set_image(self.image_s)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
     def update(self):
         """ 每帧调用，查找鼠标点击 """
-        if self.disabled:
+        if self.text == "Game Over":
+            self.set_image(self.image_over)
+        elif self.disabled:
             self.set_image(self.image_d)
         elif self.highlighted or self.selected:
             self.set_image(self.image_h)
@@ -208,19 +211,6 @@ class MenuLabel(Prefab):
             self.image_template = None
             self.set_image(img)
 
-    def set_game_over_image(self, image):
-        """
-        设置Game Over图像
-
-        Args:
-            image (Surface): 要使用的图像
-        """
-        if self.image_template == image:
-            return
-
-        self.image_template = image
-        self.image = image
-
     def set_image(self, image):
         """
         设置背景图像
@@ -232,6 +222,10 @@ class MenuLabel(Prefab):
             return
 
         self.image_template = image
+
+        if self.text == "Game Over":
+            self.image = image.copy()
+            return
 
         if hasattr(self, "font"):
             self.image = image.copy()

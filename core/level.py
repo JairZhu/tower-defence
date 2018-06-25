@@ -54,7 +54,7 @@ class Level:
 
         self.pathfinding.precompute(30)
         self.wave = Wave(self.game, 1)
-        self.lives = 20
+        self.lives = 10
         self.money = 600
         self.time = 0
 

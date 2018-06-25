@@ -3,8 +3,7 @@ from core.level import Level
 from core.defence import Defence
 from core.wave import Wave
 from core.menu import Menu
-from core.music import play_music1
-from core.music import play_music2
+from core.music import play_music
 import threading
 
 
@@ -47,7 +46,7 @@ class Game:
         self.running = True
 
         # 播放音乐
-        t = threading.Thread(target=play_music1)
+        t = threading.Thread(target=play_music)
         t.start()
 
         while self.running:
