@@ -62,7 +62,7 @@ class Game:
                         self.place_defence(pygame.mouse.get_pos())
                     self.menu.clicked()
                 elif event.type == pygame.KEYDOWN:
-                    self.menu.key_pressed(event.key)
+                    pass
 
             # 调用更新函数
             self.menu.update()

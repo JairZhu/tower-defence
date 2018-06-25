@@ -2,6 +2,7 @@
 # Sprite
 image_s    :  aimg  :  textures\menu_button.png
 image_h    :  aimg  :  textures\menu_button_h.png
+image_over :  aimg  :  textures\game_over.png
 
 # Font
 font_size  :  int   :  22

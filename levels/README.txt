@@ -1,5 +1,3 @@
-
-
 This folder contains files relating to each of the 3 levels 
 in the game: basic, maze and path
 

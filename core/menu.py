@@ -75,33 +75,6 @@ class Menu(Prefab):
             if isinstance(component, MenuButton):
                 component.clicked()
 
-    def key_pressed(self, key):
-        """
-        当有按键按下时调用
-
-        Args:
-            key: 被按下的键
-        """
-        if self.leaderboard_name is None:
-            return
-
-        keys = {pygame.K_a: "a", pygame.K_b: "b", pygame.K_c: "c", pygame.K_d: "d", pygame.K_e: "e", pygame.K_f: "f",
-                pygame.K_g: "g", pygame.K_h: "h", pygame.K_i: "i",
-                pygame.K_j: "j", pygame.K_k: "k", pygame.K_l: "l", pygame.K_m: "m", pygame.K_n: "n", pygame.K_o: "o",
-                pygame.K_p: "p", pygame.K_q: "q", pygame.K_r: "r",
-                pygame.K_s: "s", pygame.K_t: "t", pygame.K_u: "u", pygame.K_v: "v", pygame.K_w: "w", pygame.K_x: "x",
-                pygame.K_y: "y", pygame.K_z: "z",
-                pygame.K_0: "0", pygame.K_1: "1", pygame.K_2: "2", pygame.K_3: "3", pygame.K_4: "4", pygame.K_5: "5",
-                pygame.K_6: "6", pygame.K_7: "7",
-                pygame.K_8: "8", pygame.K_9: "9"}
-
-        if key in keys.keys():
-            self.leaderboard_name.set_text(self.leaderboard_name.text + (
-                keys[key].upper() if pygame.key.get_pressed()[pygame.K_LSHIFT] or pygame.key.get_pressed()[
-                    pygame.K_RSHIFT] else keys[key]))
-        elif key is pygame.K_BACKSPACE and self.leaderboard_name.text != "":
-            self.leaderboard_name.set_text(self.leaderboard_name.text[:-1])
-
     def draw(self, screen):
         """
         绘制菜单及其组件
@@ -204,7 +177,10 @@ class MenuLabel(Prefab):
         self.highlighted = False
         self.selected = False
         self.disabled = False
-        self.set_image(self.image_s)
+        if text != 'Game Over':
+            self.set_image(self.image_s)
+        else:
+            self.set_game_over_image(self.image_over)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -231,6 +207,19 @@ class MenuLabel(Prefab):
             img = self.image_template
             self.image_template = None
             self.set_image(img)
+
+    def set_game_over_image(self, image):
+        """
+        设置Game Over图像
+
+        Args:
+            image (Surface): 要使用的图像
+        """
+        if self.image_template == image:
+            return
+
+        self.image_template = image
+        self.image = image
 
     def set_image(self, image):
         """
