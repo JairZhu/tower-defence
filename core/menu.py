@@ -1,5 +1,4 @@
 from core.prefab import Prefab
-from core.leaderboard import Leaderboard
 from pygame.sprite import OrderedUpdates
 import pygame
 import math
@@ -16,12 +15,10 @@ class Menu(Prefab):
         super().__init__("menu", 0, 0)
 
         self.game = game
-        self.leaderboard = Leaderboard()
         self.components = OrderedUpdates()
         self.clear()
         self.show_main_screen()
         self.visible = True
-        self.leaderboard_name = None
 
     def show(self):
         """ 显示菜单 """
@@ -162,19 +159,8 @@ class Menu(Prefab):
         else:
             self.add_button("Start Game", self.hide)
 
-        self.add_button("How To Play", self.show_how_to_play_screen)
         self.add_button("Change Level", self.show_change_level_screen)
-        self.add_button("Leaderboard", self.show_leaderboard_screen)
         self.add_button("Quit Game", self.game.quit)
-
-    def show_how_to_play_screen(self):
-        """ 显示how to play """
-        self.clear()
-        self.add_button("Back", self.show_main_screen)
-
-        instructions = Prefab("menu_how_to_play", 0, self.component_next)
-        self.components.add(instructions)
-        instructions.rect.x = (self.rect.width - instructions.rect.width) / 2
 
     def show_change_level_screen(self):
         """ 显示change level """
@@ -190,21 +176,6 @@ class Menu(Prefab):
         if self.game.level.name != "maze":
             self.add_level_button("maze")
 
-    def show_leaderboard_screen(self):
-        """ 显示排行榜 """
-        self.leaderboard.retrieve()
-        self.clear()
-        self.add_button("Back", self.show_main_screen)
-
-        if self.leaderboard.entries is None:
-            self.add_button("Error Loading Leaderboard", None)
-        else:
-            for i in range(0, 4 if len(self.leaderboard.entries) > 6 else len(self.leaderboard.entries)):
-                entry = self.leaderboard.entries[i]
-                self.add_button(
-                    entry.name + "   Lvl=" + entry.level + "   Scr=" + str(entry.score) + "   Wve=" + str(entry.wave),
-                    None)
-
     def show_lose_screen(self):
         """ 显示game over """
         self.show()
@@ -213,23 +184,6 @@ class Menu(Prefab):
         self.add_button("You Reached Wave " + str(self.game.wave.number), None)
         self.add_button(str(self.game.level.get_score()) + " Points", None)
         self.add_button("Restart Game", lambda: self.game.load_level(self.game.level.name))
-        self.add_button("Add To Leaderboard", self.show_add_to_leaderboard_screen)
-
-    def show_add_to_leaderboard_screen(self):
-        """ 显示添加到排行榜 """
-        self.clear()
-        self.add_button("Type Your Name", None)
-        self.leaderboard_name = self.add_button("", None)
-        self.add_button("Submit", self.submit_leaderboard)
-
-    def submit_leaderboard(self):
-        """ 向排行榜提交分数 """
-        if self.leaderboard_name.text != "":
-            self.leaderboard.add(self.game.level.name, self.leaderboard_name.text, self.game.level.get_score(),
-                                 self.game.wave.number)
-            self.game.load_level(self.game.level.name)
-            self.show_leaderboard_screen()
-
 
 class MenuLabel(Prefab):
     """ 菜单系统显示的标签，包含背景 """
